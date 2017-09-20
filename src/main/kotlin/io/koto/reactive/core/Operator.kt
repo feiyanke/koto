@@ -1,12 +1,14 @@
-package io.rxk.core
+package io.koto.reactive.core
 
+import io.koto.common.delayRun
+import io.koto.common.fixRateRun
 import java.util.*
 import java.util.concurrent.*
-import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.atomic.AtomicReference
-import kotlin.concurrent.thread
+import kotlin.concurrent.fixedRateTimer
+import kotlin.concurrent.timerTask
 
 abstract class Operator<in T, R> {
     abstract val signal: IMethod<T, R>
@@ -418,9 +420,9 @@ abstract class BaseOperator<T>: EasyOperator<T>(){
     override val signal : IEasyMethod<T> = empty<T>()
 
     fun signalDo(s:T) {
-        report.output()
         count.incrementAndGet()
         signal.output(s)
+        report.output()
     }
 
     final override val finish = method {
@@ -501,5 +503,36 @@ class SkipUntilOperator<T>(predicate: (T) -> Boolean): BaseOperator<T>() {
                 null
             }
         }?.let { signalDo(it) }
+    }
+}
+
+class DebounceOperator<T>(ms:Long):BaseOperator<T>() {
+    val value = AtomicReference<T>()
+    var task : TimerTask = timerTask {  }
+
+    override val signal : IEasyMethod<T> = method<T> {
+        synchronized(this){
+            task.cancel()
+            value.set(it)
+            task = delayRun(ms) { signalDo(value.get()) }
+        }
+    }
+}
+
+class SampleOperator<T>(ms: Long):BaseOperator<T>(){
+    val value = AtomicReference<T>()
+    override val signal = method<T> {
+        value.set(it)
+    }
+    override val start = method {
+        fixRateRun(0, ms) {
+            value.updateAndGet {
+                if (it != null) {
+                    signalDo(it)
+                }
+                null
+            }
+        }
+        output()
     }
 }

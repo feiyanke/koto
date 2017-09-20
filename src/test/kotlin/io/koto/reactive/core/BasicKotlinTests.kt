@@ -16,12 +16,9 @@
 
 package io.koto.reactive.core
 
-import io.rxk.core.Context
 import org.junit.Assert.assertEquals
-import org.junit.Assert.fail
 import org.junit.Test
 import org.mockito.Mockito.*
-import kotlin.concurrent.thread
 
 /**
  * This class use plain Kotlin without extensions from the language adaptor

@@ -1,9 +1,7 @@
-package io.rxk.core
+package io.koto.reactive.core
 
+import io.koto.common.ValueLatch
 import java.util.concurrent.*
-import java.util.concurrent.atomic.AtomicInteger
-import java.util.concurrent.atomic.AtomicReference
-import kotlin.concurrent.thread
 
 class Context<T, R> (
         var signal: IMethod<T, R>,
@@ -35,6 +33,9 @@ class Context<T, R> (
     fun pack(n:Int): Context<T, R> = make(PackOperator(n))
     fun serialze(): Context<T, R> = pack(1)
     fun buffer(count:Int) = make(BufferOperator(count))
+    fun debounce(ms:Long) = make(DebounceOperator(ms))
+    fun throtle(ms:Long) = debounce(ms)
+    fun sample(ms:Long) = make(SampleOperator(ms))
     fun <E> flatMap(transform:(R)-> Context<*, E>): Context<T, E> = make(FlatMapOperator(transform))
     fun elementAt(index:Int): Context<T, R> = make(ElementAtOperator(index))
     fun first(): Context<T, R> = elementAt(0)

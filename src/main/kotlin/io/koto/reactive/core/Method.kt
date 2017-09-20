@@ -1,4 +1,4 @@
-package io.rxk.core
+package io.koto.reactive.core
 
 interface ISink<R> {
     var output : (R)->Unit

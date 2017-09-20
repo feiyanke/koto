@@ -1,4 +1,4 @@
-package io.rxk.core
+package io.koto.reactive.core
 
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit

@@ -24,20 +24,3 @@ inline fun <reified R> tryOr(default:R, expression:()->R) : R {
 inline fun <reified R> tryOrNull(expression:()->R) : R?{
     return try {expression()}catch (e:Throwable) {e.printStackTrace();null}
 }
-
-class ValueLatch<T> : CountDownLatch(1) {
-    val value = AtomicReference<T>()
-    fun set(v:T) {
-        value.set(v)
-        countDown()
-    }
-    fun get() : T {
-        await()
-        return value.get()
-    }
-    fun get(ms: Long) : T? {
-        return if(await(ms, TimeUnit.MILLISECONDS)) {
-            value.get()
-        } else null
-    }
-}
