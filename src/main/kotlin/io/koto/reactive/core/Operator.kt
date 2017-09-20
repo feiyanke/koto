@@ -535,3 +535,31 @@ class SampleOperator<T>(ms: Long):BaseOperator<T>(){
         output()
     }
 }
+
+class ApplyOperator<T>(block:T.()->Unit):EasyOperator<T>() {
+    override val error = empty<Throwable>()
+    override val report = empty()
+    override val signal = method<T> {
+        try {
+            it.block()
+            output(it)
+        } catch (e: Throwable) {
+            report()
+            error(e)
+        }
+    }
+}
+
+class AlsoOperator<T>(block: (T) -> Unit):EasyOperator<T>() {
+    override val error = empty<Throwable>()
+    override val report = empty()
+    override val signal = method<T> {
+        try {
+            block(it)
+            output(it)
+        } catch (e: Throwable) {
+            report()
+            error(e)
+        }
+    }
+}

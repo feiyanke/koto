@@ -15,6 +15,8 @@ class Stream<T, R> (
 
     fun filter(predicate:(R)->Boolean): Stream<T, R> = make(FilterOperator(predicate))
     fun distinct(): Stream<T, R> = make(DistinctOperator())
+    fun apply(block: R.() -> Unit) = make(ApplyOperator(block))
+    fun also(block: (R) -> Unit) = make(AlsoOperator(block))
     fun <E> map(tranform:(R)->E): Stream<T, E> = make(MapOperator(tranform))
     fun <E> map(method: IMethod<R, E>): Stream<T, E> = make(method)
     fun <E> mapCallback(callback:(R, (E)->Unit)->Unit): Stream<T, E> = make(MapCallbackOperator(callback))
