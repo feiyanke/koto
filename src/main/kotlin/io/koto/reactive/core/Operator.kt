@@ -7,7 +7,6 @@ import java.util.concurrent.*
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicLong
 import java.util.concurrent.atomic.AtomicReference
-import kotlin.concurrent.fixedRateTimer
 import kotlin.concurrent.timerTask
 
 abstract class Operator<in T, R> {
@@ -300,7 +299,7 @@ class BufferOperator<T>(count:Int) : Operator<T, List<T>>() {
     override val report = empty()
 }
 
-class FlatMapOperator<in T, R>(transform:(T)-> Context<*, R>): Operator<T, R>() {
+class FlatMapOperator<in T, R>(transform:(T)-> Stream<*, R>): Operator<T, R>() {
     private var count = AtomicInteger(0)
     override val signal = method<T, R> {
         transform(it).forEach {

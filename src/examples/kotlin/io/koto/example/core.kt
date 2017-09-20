@@ -1,9 +1,6 @@
 package io.koto.example
 
-import io.koto.reactive.core.Context
-import io.koto.reactive.core.asStream
-import io.koto.reactive.core.average
-import java.util.concurrent.atomic.AtomicInteger
+import io.koto.reactive.core.Stream
 import kotlin.concurrent.thread
 
 fun testMap(n:Int) : String {
@@ -19,6 +16,6 @@ fun testMapAsync(n:Any, cb:(String)->Unit){
 }
 
 fun main(args: Array<String>) {
-    Context.interval(500).sample(600).print()
+    Stream.interval(500).sample(600).print()
     print("finish")
 }
