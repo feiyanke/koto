@@ -1,2 +1,3 @@
 # koto
-Util Libraries for Kotlin
+Kotlin utility library include light-weight reactive stream implementation in pure kotlin,
+with report mechanism instead of back-pressure flow control
