@@ -1,4 +1,4 @@
-package io.koto
+package io.koto.common
 
 import kotlin.reflect.KMutableProperty0
 import kotlin.reflect.KProperty

@@ -15,7 +15,12 @@ buildscript {
     }
 }
 
-
+sourceSets {
+    examples {
+        kotlin {
+        }
+    }
+}
 
 repositories {
     maven { url 'http://maven.aliyun.com/nexus/content/repositories/central/' }
@@ -25,4 +30,10 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    examplesCompile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    examplesCompile sourceSets.main.output
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.mockito:mockito-core:1.10.19'
+    testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+    testCompile sourceSets.main.output
 }

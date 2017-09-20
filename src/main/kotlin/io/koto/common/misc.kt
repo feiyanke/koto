@@ -1,4 +1,4 @@
-package io.koto
+package io.koto.common
 
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
