@@ -101,6 +101,31 @@ class ForEachOperator<T>(block:(T)->Unit): EasyOperator<T>() {
     }
 }
 
+class GroupForEachOperator<K, T>(key:K, block: (T) -> Unit):EasyOperator<Pair<K, T>>() {
+    override val error = empty<Throwable>()
+    override val report = empty()
+    override val signal = method<Pair<K, T>> {
+        try {
+            if (it.first == key) {
+                block(it.second)
+                report()
+            } else {
+                output(it)
+            }
+        } catch (e: Throwable) {
+            error(e)
+        }
+    }
+}
+
+class GroupFinishOperator<K, T>(block: () -> Unit):EasyOperator<Pair<K, T>>() {
+    override val report = empty()
+    override val signal = method<Pair<K, T>> {
+        report()
+    }
+    override val finish = method { block() }
+}
+
 class FinishOperator<T>(block: () -> Unit): EasyOperator<T>() {
     override val finish = method { block() }
 }
@@ -562,4 +587,33 @@ class AlsoOperator<T>(block: (T) -> Unit):EasyOperator<T>() {
             error(e)
         }
     }
+}
+
+class GroupByOperator<T, K>(transform: (T) -> K):Operator<T, Pair<K, T>>() {
+    override val error = empty<Throwable>()
+    override val report = empty()
+    override val signal = method<T, Pair<K, T>> {
+        try {
+            output(transform(it) to it)
+        } catch (e:Throwable) {
+            report()
+            error(e)
+        }
+    }
+}
+
+class GroupOperator<T, K>(transform: (T) -> K):Operator<T, Pair<K, Stream<T,T>>>(){
+    val map = mutableMapOf<K, Stream<T,T>>()
+    override val error = empty<Throwable>()
+    override val report = empty()
+    override val signal = method<T, Pair<K, Stream<T,T>>> {
+        try {
+            val key = transform(it)
+            map.getOrPut(Pair)
+        } catch (e:Throwable) {
+            report()
+            error(e)
+        }
+    }
+
 }
