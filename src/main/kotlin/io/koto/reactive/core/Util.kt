@@ -15,7 +15,6 @@ fun <T:Comparable<T>> Stream<*, T>.max() = reduce { x, y->if (x>y) x else y }
 fun Stream<*, Int>.average() = scan(0) { x, y->x+y}.indexStamp().last()!!.let { it.value.toDouble() / (it.index+1) }
 
 fun <K, T> Stream<*, Pair<K, T>>.forEach(key:K, block:(T)->Unit) = make(GroupForEachOperator(key, block))
-fun <K, T> Stream<*, Pair<K, T>>.finish(block:()->Unit) = make(GroupFinishOperator(block))
 
 class TimeStamp<out T>(val value:T) {
     val time = System.currentTimeMillis()

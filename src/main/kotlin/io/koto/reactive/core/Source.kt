@@ -15,7 +15,7 @@ abstract class Source<R> {
     fun make(): Stream<R, R> = Stream(signal, error, finish, start, cancel, report)
 }
 
-abstract class BaseSource<R>: Source<R>(){
+open class BaseSource<R>: Source<R>(){
 
     private var count = AtomicInteger(0)
 

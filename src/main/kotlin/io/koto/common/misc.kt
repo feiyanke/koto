@@ -8,6 +8,7 @@ fun <T> List<T>.orNull(): List<T>? = if (isEmpty()) null else this
 fun Boolean.be() : Boolean? = if (this) this else null
 infix fun <T> Boolean.be(v:T) : T? = if (this) v else null
 inline fun <R> Boolean.be(expression: () -> R) : R? = if (this) expression() else null
+inline fun Boolean.then(block:()->Unit):Unit? = if (this) block() else null
 
 inline fun <reified R> Iterable<*>.find(predicate: (R) -> Boolean): List<R> {
     val list : MutableList<R> = mutableListOf()
