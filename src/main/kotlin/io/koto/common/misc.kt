@@ -1,8 +1,16 @@
 package io.koto.common
 
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicReference
+import java.nio.ByteBuffer
+import kotlin.experimental.and
+
+fun ByteArray.asBuffer() = ByteBuffer.wrap(this)
+
+fun Byte.asUnsigned() = toShort() and 0xFF
+fun Short.asUnsigned() = toInt() and 0xFFFF
+fun Int.asUnsigned() = toLong() and 0xFFFFFFFFL
+fun ubyte(v:Int) = v and 0xFF
+fun ushort(v:Int) = v and 0xFFFF
+fun uint(v:Long) = v and 0xFFFFFFFFL
 
 fun <T> List<T>.orNull(): List<T>? = if (isEmpty()) null else this
 fun Boolean.be() : Boolean? = if (this) this else null

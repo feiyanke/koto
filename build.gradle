@@ -30,6 +30,7 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile 'com.google.code.gson:gson:2.8.2'
     examplesCompile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     examplesCompile sourceSets.main.output
     testCompile 'junit:junit:4.12'

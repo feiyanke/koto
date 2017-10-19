@@ -5,6 +5,7 @@ import io.koto.reactive.core.Stream
 import java.util.*
 import kotlin.concurrent.thread
 import kotlin.concurrent.timerTask
+import kotlin.experimental.and
 
 fun testMap(n:Int) : String {
     Thread.sleep(1000)
@@ -18,7 +19,14 @@ fun testMapAsync(n:Any, cb:(String)->Unit){
     }
 }
 
+
 fun main(args: Array<String>) {
+
+
+    val a : Thread? = null
+
+    val b = a.also { print("111111111111111") }
+
     val key1 = KeyNotifier {
         println(it.name)
     }

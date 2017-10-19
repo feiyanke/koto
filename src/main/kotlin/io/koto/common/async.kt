@@ -23,6 +23,23 @@ class ValueLatch<T> : CountDownLatch(1) {
     }
 }
 
+class Latch {
+    var latch = CountDownLatch(1)
+
+    @Synchronized fun await() {
+        latch = CountDownLatch(1)
+        latch.await()
+    }
+
+    @Synchronized fun await(ms:Long) : Boolean {
+        latch = CountDownLatch(1)
+        return latch.await(ms, TimeUnit.MILLISECONDS)
+    }
+    fun async() {
+        latch.countDown()
+    }
+}
+
 inline fun delayRun(delay:Long, crossinline block:TimerTask.()->Unit):TimerTask
         = timerTask(block).apply { Timer().schedule(this, delay) }
 fun delayRun(delay:Long, task:TimerTask) = Timer().schedule(task, delay)

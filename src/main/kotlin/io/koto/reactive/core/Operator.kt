@@ -609,7 +609,7 @@ class GroupOperator<T, K>(transform: (T) -> K):Operator<T, Pair<K, Stream<T,T>>>
     override val signal = method<T, Pair<K, Stream<T,T>>> {
         try {
             val key = transform(it)
-            map.getOrPut(Pair)
+//            map.getOrPut(Pair)
         } catch (e:Throwable) {
             report()
             error(e)
