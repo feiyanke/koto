@@ -4,19 +4,22 @@ import io.koto.common.ValueLatch
 import java.util.concurrent.*
 
 class Stream<T, R> (
-        var signal: IMethod<T, R>,
-        var error: IEasyMethod<Throwable>,
-        var finish: IUnitMethod,
+        private var signal: IMethod<T, R>,
+        private var error: IEasyMethod<Throwable>,
+        private var finish: IUnitMethod,
 
-        var start: IUnitMethod,
-        var cancel: IUnitMethod,
-        var report: IUnitMethod
-) {
+        private var start: IUnitMethod,
+        private var cancel: IUnitMethod,
+        private var report: IUnitMethod
+) : (T)->Unit {
+    override fun invoke(s: T) {
+        signal(s)
+    }
 
     fun filter(predicate:(R)->Boolean): Stream<T, R> = make(FilterOperator(predicate))
     fun distinct(): Stream<T, R> = make(DistinctOperator())
-    fun apply(block: R.() -> Unit) = make(ApplyOperator(block))
-    fun also(block: (R) -> Unit) = make(AlsoOperator(block))
+    fun doApply(block: R.() -> Unit) = make(ApplyOperator(block))
+    fun doAlso(block: (R) -> Unit) = make(AlsoOperator(block))
     fun <E> map(tranform:(R)->E): Stream<T, E> = make(MapOperator(tranform))
     fun <E> map(method: IMethod<R, E>): Stream<T, E> = make(method)
     fun <E> mapCallback(callback:(R, (E)->Unit)->Unit): Stream<T, E> = make(MapCallbackOperator(callback))
@@ -75,7 +78,11 @@ class Stream<T, R> (
     fun any(predicate: (R) -> Boolean) = map(predicate).takeUntil { it }.last()!!
     fun count() = (indexStamp().last()?.index?:-1) + 1
 
+    fun <K> groupWith(transform:(R)->K):Stream<T, Pair<K, R>> = make(GroupWithOperator(transform))
+    fun <K> groupBy(transform:(R)->K, operator:Stream<R, R>.(K)->Unit):Stream<T, Unit> = make(GroupByOperator(transform, operator))
+
     companion object {
+        fun <T> create() : Stream<T, T> = make(BaseSource())
         fun <T> create(block: Source<T>.()->Unit): Stream<T, T> = make(BlockSource(block))
         fun fromRunable(block:()->Unit): Stream<Unit, Unit> = make(RunableSource(block))
         fun from(runnable: Runnable): Stream<Unit, Unit> = fromRunable(runnable::run)

@@ -23,7 +23,7 @@ import org.mockito.Mockito.*
 /**
  * This class use plain Kotlin without extensions from the language adaptor
  */
-class BasicKotlinTests : KotlinTests() {
+class BasicRxTests : KotlinTests() {
 
     @Test
     fun testCreate() {
