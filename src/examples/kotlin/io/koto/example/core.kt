@@ -1,5 +1,6 @@
 package io.koto.example
 
+import io.koto.common.JParser
 import io.koto.common.be
 import io.koto.common.delayRun
 import io.koto.common.then
@@ -23,6 +24,10 @@ fun testMapAsync(n:Any, cb:(String)->Unit){
 }
 
 fun main(args: Array<String>) {
+
+    val a = JParser("""   [] """).parse()
+
+
     (0..10).asStream()
             .groupBy({it<5}){
                 if (it) {
