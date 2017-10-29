@@ -1,5 +1,6 @@
 package io.koto.example
 
+import io.koto.common.Json
 import io.koto.common.Json.Companion.array
 import io.koto.common.Json.Companion.obj
 import io.koto.common.Json.Companion.parse
@@ -19,6 +20,14 @@ fun testMapAsync(n:Any, cb:(String)->Unit){
 }
 
 fun main(args: Array<String>) {
+
+    val m = mutableMapOf<String, Any>()
+    m["1"] = 1
+    m["2"] = "2"
+    m["3"] = true
+    m["4"] = listOf(1,2,3)
+    m["5"] = mapOf("1" to 1)
+    val aaaa = m.toString()
 
     var a = parse("""   [ "111"  ,  true  ,  false,  null,null,123,  -342.12  , -456.1e2   ] """)
     a = parse("""   {   "11  22":1  , "231"   :  {  ""  : true }  ,  "tt"  :  [   1,2,3,4,5]              } """)

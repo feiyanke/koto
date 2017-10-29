@@ -1,212 +1,113 @@
 package io.koto.common
+//
+//import com.google.gson.*
+//
+//fun JsonObject.put(name:String, value:Any) {
+//    when (value) {
+//        is JsonElement -> add(name, value)
+//        is Boolean -> addProperty(name, value)
+//        is Number -> addProperty(name, value)
+//        is String -> addProperty(name, value)
+//        is Char -> addProperty(name, value)
+//        else -> throw JsonIOException("value is not json element!")
+//    }
+//}
+//
+//fun JsonArray.put(value:Any) {
+//    when (value) {
+//        is JsonElement -> add(value)
+//        is Boolean -> add(value)
+//        is Number -> add(value)
+//        is String -> add(value)
+//        is Char -> add(value)
+//        else -> throw JsonIOException("value is not json element!")
+//    }
+//}
+//
+//
+//fun obj(s:String): JsonObject = JsonParser().parse(s).asJsonObject
+//fun array(s:String): JsonArray = JsonParser().parse(s).asJsonArray
+//inline fun obj(block: JsonObject.()->Unit) = JsonObject().apply(block)
+//inline fun array(block: JsonArray.() -> Unit) = JsonArray().apply(block)
+//inline fun obj(vararg pairs : Pair<String, Any>) = obj { pairs.forEach { put(it.first, it.second) } }
+//inline fun array(vararg values : Any) = array { values.forEach { put(it) } }
+//
+//fun JsonObject.obj(s:String) = get(s).asJsonObject
+//fun JsonObject.int(s:String) = get(s).asInt
+//fun JsonObject.bool(s:String) = get(s).asBoolean
+//fun JsonObject.float(s:String) = get(s).asFloat
+//fun JsonObject.array(s:String) = get(s).asJsonArray
+//fun JsonObject.str(s:String) = get(s).asString
+//fun JsonObject.long(s:String) = get(s).asLong
+//inline fun <reified T, R> JsonObject.one(s:String, predicate: T.() -> R?) : R = array(s).one(predicate)?:throw JsonIOException("not that object")
+//inline fun <reified T> JsonObject.one(s:String) : T = array(s).one()?:throw JsonIOException("not that object")
+//inline fun <reified R> JsonObject.oneobj(s:String, predicate: JsonObject.() -> R?) : R = one(s, predicate)?:throw JsonIOException("not that object")
+//inline fun JsonObject.oneobj(s:String) : JsonObject = one(s)?:throw JsonIOException("not that object")
+//inline fun <reified T> JsonObject.array(s: String, action: (T) -> Unit) = array(s).forEach(action)
+//inline fun JsonObject.objs(s: String, action: JsonObject.() -> Unit) = array(s, action)
+//
+//inline fun <reified T> JsonArray.forEach(action: T.() -> Unit): Unit {
+//    for (i in 0..(size()-1)) {
+//        val o = get(i)
+//        if (o is T) o.action()
+//    }
+//}
+//
+//inline fun <reified T, R> JsonArray.one(predicate: T.() -> R?) : R? {
+//    forEach<T> {
+//        val r = predicate()
+//        if (r!=null) return r
+//    }
+//    return null
+//}
+//
+//inline fun <reified T> JsonArray.one() : T? {
+//    forEach<T> {
+//        return this
+//    }
+//    return null
+//}
 
-import com.google.gson.*
+//
+//fun json(obj:Any?) : String {
+//    return when(obj) {
+//        null -> "null"
+//        is Boolean -> obj.toString()
+//        is Number -> obj.toString()
+//        is String -> "\"$obj\""
+//        is Map<*, *> -> {
+//            obj.
+//        }
+//
+//    }
+//}
+//
+//fun <T:Any> Map<String, T>.json() : String {
+//    return entries.map { "\"${it.key}\":${Json.jelement(it.value)}" }.joinToString(",","{","}")
+//}
+//
+//fun <T:Any> Array<T>.json() : String {
+//    return map { Json.jelement(it).json() }.joinToString(",","[","]")
+//}
+//
+//fun <T:Any> Iterable<T>.json() : String {
+//    return map { Json.jelement(it).json() }.joinToString(",","[","]")
+//}
 
-fun JsonObject.put(name:String, value:Any) {
-    when (value) {
-        is JsonElement -> add(name, value)
-        is Boolean -> addProperty(name, value)
-        is Number -> addProperty(name, value)
-        is String -> addProperty(name, value)
-        is Char -> addProperty(name, value)
-        else -> throw JsonIOException("value is not json element!")
-    }
-}
-
-fun JsonArray.put(value:Any) {
-    when (value) {
-        is JsonElement -> add(value)
-        is Boolean -> add(value)
-        is Number -> add(value)
-        is String -> add(value)
-        is Char -> add(value)
-        else -> throw JsonIOException("value is not json element!")
-    }
-}
-
-
-fun obj(s:String): JsonObject = JsonParser().parse(s).asJsonObject
-fun array(s:String): JsonArray = JsonParser().parse(s).asJsonArray
-inline fun obj(block: JsonObject.()->Unit) = JsonObject().apply(block)
-inline fun array(block: JsonArray.() -> Unit) = JsonArray().apply(block)
-inline fun obj(vararg pairs : Pair<String, Any>) = obj { pairs.forEach { put(it.first, it.second) } }
-inline fun array(vararg values : Any) = array { values.forEach { put(it) } }
-
-fun JsonObject.obj(s:String) = get(s).asJsonObject
-fun JsonObject.int(s:String) = get(s).asInt
-fun JsonObject.bool(s:String) = get(s).asBoolean
-fun JsonObject.float(s:String) = get(s).asFloat
-fun JsonObject.array(s:String) = get(s).asJsonArray
-fun JsonObject.str(s:String) = get(s).asString
-fun JsonObject.long(s:String) = get(s).asLong
-inline fun <reified T, R> JsonObject.one(s:String, predicate: T.() -> R?) : R = array(s).one(predicate)?:throw JsonIOException("not that object")
-inline fun <reified T> JsonObject.one(s:String) : T = array(s).one()?:throw JsonIOException("not that object")
-inline fun <reified R> JsonObject.oneobj(s:String, predicate: JsonObject.() -> R?) : R = one(s, predicate)?:throw JsonIOException("not that object")
-inline fun JsonObject.oneobj(s:String) : JsonObject = one(s)?:throw JsonIOException("not that object")
-inline fun <reified T> JsonObject.array(s: String, action: (T) -> Unit) = array(s).forEach(action)
-inline fun JsonObject.objs(s: String, action: JsonObject.() -> Unit) = array(s, action)
-
-inline fun <reified T> JsonArray.forEach(action: T.() -> Unit): Unit {
-    for (i in 0..(size()-1)) {
-        val o = get(i)
-        if (o is T) o.action()
-    }
-}
-
-inline fun <reified T, R> JsonArray.one(predicate: T.() -> R?) : R? {
-    forEach<T> {
-        val r = predicate()
-        if (r!=null) return r
-    }
-    return null
-}
-
-inline fun <reified T> JsonArray.one() : T? {
-    forEach<T> {
-        return this
-    }
-    return null
-}
-
-class AAA : MutableMap<String, Json> {
-    override val size: Int
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-
-    override fun containsKey(key: String): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun containsValue(value: Json): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun get(key: String): Json? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun isEmpty(): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override val entries: MutableSet<MutableMap.MutableEntry<String, Json>>
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-    override val keys: MutableSet<String>
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-    override val values: MutableCollection<Json>
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-
-    override fun clear() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun put(key: String, value: Json): Json? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun putAll(from: Map<out String, Json>) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun remove(key: String): Json? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-}
-
-class BBB : MutableList<Json> {
-    override val size: Int
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
-
-    override fun contains(element: Json): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun containsAll(elements: Collection<Json>): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun get(index: Int): Json {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun indexOf(element: Json): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun isEmpty(): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun iterator(): MutableIterator<Json> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun lastIndexOf(element: Json): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun add(element: Json): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun add(index: Int, element: Json) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun addAll(index: Int, elements: Collection<Json>): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun addAll(elements: Collection<Json>): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun clear() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun listIterator(): MutableListIterator<Json> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun listIterator(index: Int): MutableListIterator<Json> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun remove(element: Json): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun removeAll(elements: Collection<Json>): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun removeAt(index: Int): Json {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun retainAll(elements: Collection<Json>): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun set(index: Int, element: Json): Json {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun subList(fromIndex: Int, toIndex: Int): MutableList<Json> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-}
-
-class JException(message: String?) : Exception(message)
-fun error(msg:String? = null) : Nothing = throw JException(msg)
 sealed class Json : MutableMap<String, Json>, MutableList<Json> {
-
+    class JException(message: String?) : Exception(message)
     companion object {
+        internal fun error(msg:String? = null) : Nothing = throw JException(msg)
+        private fun jelement(obj:Any?) : Json {
+            return if (obj == null) { JNull } else when(obj) {
+                is Number -> JNumber(obj)
+                is Boolean -> JBool(obj)
+                is String -> JString(obj)
+                is Json -> obj
+                else -> JString(toString())
+            }
+        }
         fun parse(json: String) = JParser(json).parse()
-        fun obj(json: String) = parse(json)
-        fun array(json: String) = parse(json)
         fun obj(vararg pairs : Pair<String, Any?>) = JObject().apply {
             pairs.forEach { put(it.first, jelement(it.second)) }
         }
@@ -215,26 +116,15 @@ sealed class Json : MutableMap<String, Json>, MutableList<Json> {
         }
     }
 
-    fun Number.json() = JNumber(this)
-    fun String.json() = JString(this)
-    fun Boolean.json() = JBool(this)
-
     open fun bool() : Boolean = error()
     open fun string() : String = error()
     open fun int() : Int = error()
     open fun float() : Float = error()
     open fun double() : Double = error()
     open fun jnull() : JNull = error()
+    open fun json() : String = error()
+    override fun toString(): String = json()
 
-    fun jelement(obj:Any?) : Json {
-        return if (obj == null) { JNull } else when(obj) {
-            is Number -> JNumber(obj)
-            is Boolean -> JBool(obj)
-            is String -> JString(obj)
-            is Json -> obj
-            else -> error()
-        }
-    }
 
     //for interface MutableList
     override val size: Int get() = error()
@@ -264,7 +154,7 @@ sealed class Json : MutableMap<String, Json>, MutableList<Json> {
         set(index, JNumber(obj))
     }
     open operator fun set(index: Int, obj: String?) {
-        set(index, obj?.json()?:JNull)
+        set(index, obj?.be(JString(obj))?:JNull)
     }
     open operator fun set(index: Int, obj: Boolean) {
         set(index, JBool(obj))
@@ -274,7 +164,7 @@ sealed class Json : MutableMap<String, Json>, MutableList<Json> {
         add(JNumber(obj))
     }
     open fun add(obj: String?) {
-        add(obj?.json()?:JNull)
+        add(obj?.be(JString(obj))?:JNull)
     }
     open fun add(obj: Boolean) {
         add(JBool(obj))
@@ -302,7 +192,7 @@ sealed class Json : MutableMap<String, Json>, MutableList<Json> {
         put(key, JNumber(obj))
     }
     open operator fun set(key: String, obj: String?) {
-        put(key, obj?.json()?:JNull)
+        put(key, obj?.be(JString(obj))?:JNull)
     }
     open operator fun set(key: String, obj: Boolean) {
         put(key, JBool(obj))
@@ -310,24 +200,24 @@ sealed class Json : MutableMap<String, Json>, MutableList<Json> {
 
     object JNull : Json() {
         override fun jnull() = this
-        override fun toString(): String = "null"
+        override fun json(): String = "null"
     }
 
     class JBool(private val v:Boolean) : Json() {
         override fun bool(): Boolean = v
-        override fun toString(): String = v.toString()
+        override fun json(): String = v.toString()
     }
 
     class JNumber(private val v:Number) : Json() {
         override fun int(): Int = v.toInt()
         override fun float(): Float = v.toFloat()
         override fun double(): Double = v.toDouble()
-        override fun toString(): String = v.toString()
+        override fun json(): String = v.toString()
     }
 
     class JString(private val v:String) : Json() {
         override fun string(): String = v
-        override fun toString(): String = "\"$v\""
+        override fun json(): String = "\"$v\""
     }
 
     class JObject : Json() {
@@ -344,7 +234,7 @@ sealed class Json : MutableMap<String, Json>, MutableList<Json> {
         override fun put(key: String, value: Json): Json? = map.put(key, value)
         override fun putAll(from: Map<out String, Json>): Unit = map.putAll(from)
         override fun remove(key: String): Json? = map.remove(key)
-        override fun toString(): String = map.entries.map { "\"${it.key}\":${it.value}" }.joinToString(",","{","}")
+        override fun json(): String = map.entries.map { "\"${it.key}\":${it.value}" }.joinToString(",","{","}")
 
     }
 
@@ -371,10 +261,10 @@ sealed class Json : MutableMap<String, Json>, MutableList<Json> {
         override fun retainAll(elements: Collection<Json>): Boolean = list.retainAll(elements)
         override fun set(index: Int, element: Json): Json = list.set(index, element)
         override fun subList(fromIndex: Int, toIndex: Int): MutableList<Json> = list.subList(fromIndex, toIndex)
-        override fun toString(): String = list.joinToString(",","[","]")
+        override fun json(): String = list.joinToString(",","[","]")
     }
 
-    class JParser(val json:String) {
+    private class JParser(val json:String) {
         private var at = 0
         private fun next() = json[at++]
         private val c : Char

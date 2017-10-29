@@ -18,6 +18,8 @@ infix fun <T> Boolean.be(v:T) : T? = if (this) v else null
 inline fun <R> Boolean.be(expression: () -> R) : R? = if (this) expression() else null
 inline fun Boolean.then(block:()->Unit):Unit? = if (this) block() else null
 
+fun <T> Any.be(v:T):T = v
+
 inline fun <reified R> Iterable<*>.find(predicate: (R) -> Boolean): List<R> {
     val list : MutableList<R> = mutableListOf()
     for (i in this) {
