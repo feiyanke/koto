@@ -22,6 +22,7 @@ fun main(args: Array<String>) {
 
     var a = parse("""   [ "111"  ,  true  ,  false,  null,null,123,  -342.12  , -456.1e2   ] """)
     a = parse("""   {   "11  22":1  , "231"   :  {  ""  : true }  ,  "tt"  :  [   1,2,3,4,5]              } """)
+//    val v = a["11  22"]
     a = obj(
             "a" to 1,
             "b" to 3,
@@ -39,6 +40,7 @@ fun main(args: Array<String>) {
             ))
     )
     val b = a.toString()
+
 
 
     (0..10).asStream()
