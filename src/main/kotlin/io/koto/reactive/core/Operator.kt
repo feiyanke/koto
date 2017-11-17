@@ -526,11 +526,11 @@ class SkipUntilOperator<T>(predicate: (T) -> Boolean): BaseOperator<T>() {
 
 class DebounceOperator<T>(ms:Long):BaseOperator<T>() {
     val value = AtomicReference<T>()
-    var task : TimerTask = timerTask {  }
+    lateinit var task : ScheduledFuture<*>
 
     override val signal : IEasyMethod<T> = method<T> {
         synchronized(this){
-            task.cancel()
+            task.cancel(true)
             value.set(it)
             task = delayRun(ms) { signalDo(value.get()) }
         }
