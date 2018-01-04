@@ -1,6 +1,7 @@
 package io.koto.example
 
 import io.koto.reactive.core.asStream
+import java.util.regex.Pattern
 import kotlin.concurrent.thread
 
 fun testMap(n:Int) : String {
@@ -15,21 +16,27 @@ fun testMapAsync(n:Any, cb:(String)->Unit){
     }
 }
 
+
+
 fun main(args: Array<String>) {
 
-    (0..10).asStream()
-            .groupBy({it<5}){
-                if (it) {
-                    take(2)
-                    .forEach { println(it) }
-                    .finish { println("finish:$it") }
+    for (i in 0 until 11 step 2 ) {
+        println(i)
+    }
 
-                } else {
-                    take(3)
-                    .forEach { println("no:$it") }
-                    .finish{println("finish:$it")}
-                }
-            }
-            .finish { println("finish") }
+//    (0..10).asStream()
+//            .groupBy({it<5}){
+//                if (it) {
+//                    take(2)
+//                    .forEach { println(it) }
+//                    .finish { println("finish:$it") }
+//
+//                } else {
+//                    take(3)
+//                    .forEach { println("no:$it") }
+//                    .finish{println("finish:$it")}
+//                }
+//            }
+//            .finish { println("finish") }
 
 }

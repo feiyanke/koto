@@ -7,10 +7,8 @@ class Dictionary : Map<String, Set<Any>> {
 
     class Builder {
         val list = mutableListOf<Pair<String, Any>>()
-        fun add(word:String, vararg values:Any) : Builder {
-            values.forEach {
-                list.add(word to it)
-            }
+        fun add(word:String, value:Any=word):Builder {
+            list.add(word to value)
             return this
         }
         fun build() : Dictionary = Dictionary(list)
@@ -64,41 +62,112 @@ class Dictionary : Map<String, Set<Any>> {
     private fun add(word:String, vararg values:Any) = trie.add(word, *values)
     private fun build() = trie.build()
 
-    private fun findEntry(s:String, exclusive:Boolean = true):List<Pair<String, MutableSet<Any>>>
-            = mutableListOf<Pair<String, MutableSet<Any>>>()
-            .apply {
-                Emitter(trie).go(s) {
-                    Emitter(it).back(exclusive) {
-                        add(it)
+    fun find(s: String, exclusive:Boolean = true) = Emitter(s).find(exclusive).flatMap { it.objects }.toSet()
+
+    inner private class Emitter(val text:String) {
+        var node = trie
+        var position = 0
+
+        fun find(exclusive:Boolean=true) = if (exclusive) findExclusive() else findAll()
+
+        fun findAll():List<Emit> {
+            return mutableListOf<Emit>().apply {
+                text.forEach {
+                    position++
+                    node = node.go(it)
+                    addAll(emitAll(node))
+                }
+            }
+        }
+
+        fun findExclusive():List<Emit> {
+            val emits = Array<Emit?>(text.length) {null}
+            text.forEach {
+                position++
+                node = node.go(it)
+                emitExclusive(node)?.let {
+                    var start = it.position - it.name.length
+                    emits[start] = it
+                    for (i in start+1 until position) {
+                        emits[i] = null
                     }
                 }
             }
-
-    fun find(s: String, exclusive:Boolean = true) = findEntry(s, exclusive).flatMap { it.second }.toSet()
-
-    private class Emitter(var node: Node) {
-
-        fun go(c: Char, emit: ((Node) -> Unit)? = null) : Node {
-            node = node.go(c)
-            emit?.invoke(node)
-            return node
+            return emits.filterNotNull()
         }
 
-        fun go(s:String, emit: ((Node) -> Unit)? = null) {
-            s.forEach { go(it, emit) }
-        }
-
-        fun back(exclusive: Boolean, emit: ((Pair<String, MutableSet<Any>>) -> Unit)) {
+        fun emitExclusive(n:Node):Emit? {
+            var node = n
             while (true) {
                 val entry = node.entry
                 if (entry != null) {
-                    emit.invoke(entry)
-                    if (exclusive) return
+                    return Emit(position, entry.first, entry.second)
                 }
-                node = node.back()?:return
+                node = node.back()?:return null
             }
         }
+
+        fun emitAll(n:Node):List<Emit> {
+            return mutableListOf<Emit>().apply {
+                var node = n
+                while (true) {
+                    val entry = node.entry
+                    if (entry != null) {
+                        add(Emit(position, entry.first, entry.second))
+                    }
+                    node = node.back()?:break
+                }
+            }
+        }
+
+//        fun back(exclusive: Boolean, emit: ((Emit) -> Unit)) {
+//            while (true) {
+//                val entry = node.entry
+//                if (entry != null) {
+//                    emit.invoke(Emit(position, entry.first, entry.second))
+//                    if (exclusive) return
+//                }
+//                node = node.back()?:return
+//            }
+//        }
     }
+
+//    private class Emitter(var node: Node) {
+//
+//        fun go(c: Char, i:Int,  emit: ((Node, Int) -> Unit)? = null) : Node {
+//            node = node.go(c)
+//            emit?.invoke(node, i)
+//            return node
+//        }
+//
+//        fun go(s:String, emit: ((Node, Int) -> Unit)? = null) {
+//            s.forEachIndexed { i,it->
+//                go(it, i, emit) }
+//        }
+//
+//        fun go(c: Char,  emit: ((Node) -> Unit)? = null) : Node {
+//            node = node.go(c)
+//            emit?.invoke(node)
+//            return node
+//        }
+//
+//        fun go(s:String, emit: ((Node) -> Unit)? = null) {
+//            s.forEach { go(it, emit) }
+//        }
+//
+//        fun back(exclusive: Boolean, i:Int, emit: ((Emit) -> Unit)) {
+//            while (true) {
+//                val entry = node.entry
+//                if (entry != null) {
+//                    emit.invoke(Emit(i, entry.first, entry.second))
+//                    if (exclusive) return
+//                }
+//                node = node.back()?:return
+//            }
+//        }
+//    }
+
+    class Emit(val position:Int, val name:String, val objects:MutableSet<Any>)
 
     private open class Node {
 

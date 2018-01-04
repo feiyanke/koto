@@ -1,10 +1,7 @@
 package io.koto.common
 
 import java.util.*
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.Executors
-import java.util.concurrent.ScheduledThreadPoolExecutor
-import java.util.concurrent.TimeUnit
+import java.util.concurrent.*
 import java.util.concurrent.atomic.AtomicReference
 import kotlin.concurrent.timerTask
 
@@ -39,6 +36,51 @@ class Latch {
     }
     fun async() {
         latch.countDown()
+    }
+}
+
+private class NoException(val v:Any) : Exception()
+
+class ExceptionLatch {
+
+    val latch = ValueLatch<Exception>()
+    fun error(e:Exception) = latch.set(e)
+    fun async() = latch.set(NoException(Unit))
+    fun await() {
+        val e = latch.get()
+        when(e) {
+            is NoException -> return
+            else -> throw e
+        }
+    }
+    fun await(ms:Long) {
+        val e = latch.get(ms)
+        when(e) {
+            null -> throw TimeoutException()
+            is NoException -> return
+            else -> throw e
+        }
+    }
+}
+
+class ExceptionValueLatch<T> {
+    val latch = ValueLatch<Exception>()
+    fun error(e:Exception) = latch.set(e)
+    fun set(v:T) = latch.set(NoException(v as Any))
+    fun get() : T {
+        val e = latch.get()
+        when(e) {
+            is NoException -> return e.v as T
+            else -> throw e
+        }
+    }
+    fun get(ms:Long) : T {
+        val e = latch.get(ms)
+        when(e) {
+            null -> throw TimeoutException()
+            is NoException -> return e.v as T
+            else -> throw e
+        }
     }
 }
 
