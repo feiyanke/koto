@@ -1,6 +1,7 @@
 package io.koto.example
 
 import io.koto.reactive.core.asStream
+import java.io.Closeable
 import java.util.regex.Pattern
 import kotlin.concurrent.thread
 
@@ -20,9 +21,24 @@ fun testMapAsync(n:Any, cb:(String)->Unit){
 
 fun main(args: Array<String>) {
 
-    for (i in 0 until 11 step 2 ) {
-        println(i)
+    val a = TestCloseable()
+    val b = TestCloseable()
+    val c = TestCloseable()
+    try {
+        use(a,b,c) {
+            println("123")
+            throw Exception("!234")
+        }
+    } catch (e:Exception) {
+        println("345")
+        e.printStackTrace()
     }
+
+
+//    for (i in 0 until 11 step 2 ) {
+//        println(i)
+//    }
+    
 
 //    (0..10).asStream()
 //            .groupBy({it<5}){
@@ -39,4 +55,25 @@ fun main(args: Array<String>) {
 //            }
 //            .finish { println("finish") }
 
+}
+
+class TestCloseable : Closeable {
+    override fun close() {
+        println("close:$this")
+    }
+
+}
+
+public inline fun <R> use(vararg closeble: Closeable, block: () -> R): R {
+    try {
+        return block()
+    } finally {
+        for (c in closeble) {
+            try {
+                c.close()
+            } catch (e:Exception) {
+
+            }
+        }
+    }
 }
